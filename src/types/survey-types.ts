@@ -1,3 +1,5 @@
+import { firebaseTimesStampType } from "./utils-types";
+
 export interface INewSurveyAnswerProps {
     questionId: string;
     value: number;
@@ -12,6 +14,7 @@ export interface ISurveyAnswerProps {
 export interface ISurveyAnsweredProps {
     id: string;
     author: string;
+    timestamp: firebaseTimesStampType;
     result: number;
     answers: ISurveyAnswerProps[];
 }
