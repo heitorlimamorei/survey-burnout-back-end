@@ -19,6 +19,13 @@ export interface ISurveyAnsweredProps {
     answers: ISurveyAnswerProps[];
 }
 
+export interface ISurveyAnsweredWithoutAnswersProps {
+    id: string;
+    author: string;
+    timestamp: firebaseTimesStampType;
+    result: number;
+}
+
 export interface INewSurveyAnsweredProps {
     author: string;
     result: number;

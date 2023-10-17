@@ -24,7 +24,16 @@ export async function getSurveyAnswered(req: Request, res: Response, next: NextF
     }
 }
 
+export async function getSurveys(req: Request, res: Response, next: NextFunction) {
+    try {
+        res.send(await surveyRepository.getSurveys())
+    } catch (err) {
+        next(err)
+    }
+}
+
 export default {
     createNewSurveyAnswered,
-    getSurveyAnswered
+    getSurveyAnswered,
+    getSurveys
 }

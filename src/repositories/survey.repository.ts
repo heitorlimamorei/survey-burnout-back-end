@@ -5,8 +5,14 @@ import {
   ISurveyAnsweredProps,
   ISurveyAnswerProps,
   INewSurveyAnswerProps,
+  ISurveyAnsweredWithoutAnswersProps,
 } from "../types/survey-types";
 import { normalizeFirebaseRespItems } from '../utils/dataMethods';
+
+interface IOnlyAnswers {
+  id: string;
+  answers: ISurveyAnswerProps[];
+}
 
 const PromiseScheduler = async (promises: Promise<any>[]): Promise<any> => {
     return await Promise.all([...promises]);   
@@ -37,6 +43,40 @@ const getSurveyAnswer = async (surveyId: string): Promise<ISurveyAnsweredProps> 
   }
 }
 
+const getOnlyAnswers = async (surveyId: string): Promise<IOnlyAnswers> => {
+  const anwers = collection(db, `surveys/${surveyId}/answers`);
+  const answersResp: any = await getDocs(anwers);
+
+  return {
+    id: surveyId,
+    answers: [...normalizeFirebaseRespItems(answersResp)]
+  }
+}
+
+const getSurveys = async (): Promise<ISurveyAnsweredProps[]> => {
+  const surveysRef = collection(db, `surveys`);
+  const surveysResp: any = await getDocs(surveysRef);
+  const anwersWithoutAnswers: ISurveyAnsweredWithoutAnswersProps[] = normalizeFirebaseRespItems(surveysResp);
+
+  let surveysAnwersPromises: Promise<IOnlyAnswers>[] = [];
+  anwersWithoutAnswers.forEach((answer: ISurveyAnsweredWithoutAnswersProps) => {
+    surveysAnwersPromises.push(getOnlyAnswers(answer.id));
+  })
+
+  const answersResp: IOnlyAnswers[] = await PromiseScheduler(surveysAnwersPromises);
+  const surveysF = answersResp.map((c) => {
+    const survey = anwersWithoutAnswers.find((s) => s.id === c.id);
+    if(!survey?.author) throw new Error('Survey not in shape');
+
+    return {
+      ...survey,
+      answers: [...c.answers]
+    }
+  });
+  
+  return surveysF ? surveysF : [];
+}
+
 
 const addSurveyAnswered = async (props: INewSurveyAnsweredProps): Promise<void> => {
   const surveysRef = collection(db, `surveys`);
@@ -50,5 +90,6 @@ const addSurveyAnswered = async (props: INewSurveyAnsweredProps): Promise<void> 
 
 export default {
   addSurveyAnswered,
-  getSurveyAnswer
+  getSurveyAnswer,
+  getSurveys
 }
