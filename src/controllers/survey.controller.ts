@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { INewSurveyAnsweredProps } from "../types/survey-types";
-import surveyRepository from "../repositories/survey.repository";
+import surveyService from "../services/survey.service";
 
 export async function createNewSurveyAnswered(req: Request, res: Response, next: NextFunction) {
     try {
@@ -9,7 +9,7 @@ export async function createNewSurveyAnswered(req: Request, res: Response, next:
             throw new Error("400 - Missing required fields");
         }
            
-        res.send(await surveyRepository.addSurveyAnswered(createNewSurveyAnswered));
+        res.send(await surveyService.addSurveyAnswered(createNewSurveyAnswered));
     } catch (err) {
         next(err)
     }
@@ -18,7 +18,7 @@ export async function createNewSurveyAnswered(req: Request, res: Response, next:
 export async function getSurveyAnswered(req: Request, res: Response, next: NextFunction) {
     try {
         const id: any = req.params.id;
-        res.send(await surveyRepository.getSurveyAnswer(id))
+        res.send(await surveyService.getSurveyAnswer(id))
     } catch (err) {
         next(err)
     }
@@ -26,7 +26,7 @@ export async function getSurveyAnswered(req: Request, res: Response, next: NextF
 
 export async function getSurveys(req: Request, res: Response, next: NextFunction) {
     try {
-        res.send(await surveyRepository.getSurveys())
+        res.send(await surveyService.getAllSurveys())
     } catch (err) {
         next(err)
     }

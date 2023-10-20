@@ -7,4 +7,6 @@ const survey_controller_1 = __importDefault(require("../controllers/survey.contr
 const express_1 = __importDefault(require("express"));
 const SurveyRouter = express_1.default.Router();
 SurveyRouter.post('/', survey_controller_1.default.createNewSurveyAnswered);
+SurveyRouter.get('/:id', survey_controller_1.default.getSurveyAnswered);
+SurveyRouter.get('/', survey_controller_1.default.getSurveys);
 exports.default = SurveyRouter;
